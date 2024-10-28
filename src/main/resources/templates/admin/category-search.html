@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-admin}">
+<head>
+    <title>Search Categories</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1>Search Categories</h1>
+
+    <form th:action="@{/admin/categories/search}" method="get">
+        <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by category name"/>
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Hiển thị bảng kết quả chỉ khi có keyword -->
+    <div th:if="${keyword != null && !keyword.isEmpty()}">
+        <h2>Search Results:</h2>
+        <table border="1">
+            <thead>
+            <tr>
+                <th style="text-align: center;">ID</th>
+                <th style="text-align: center;">Image</th>
+                <th style="text-align: center;">Category name</th>
+                <th style="text-align: center;">Status</th>
+                <th style="text-align: center;">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cate : ${categories}">
+                <td width="50" style="text-align: center;">
+                    <a th:href="@{/admin/categories(id=${cate.categoryId})}" th:text="${cate.categoryId}"></a>
+                </td>
+                <td style="text-align: center;">
+                    <img height="150" width="200"
+                         th:src="${cate.image != null && #strings.startsWith(cate.image, 'https') ? cate.image : '/image?filename=' + (cate.image != null ? cate.image : '')}"/>
+                </td>
+                <td style="text-align: center;" th:text="${cate.categoryName}"></td>
+                <td style="text-align: center;">
+                    <span th:text="${cate.status == 1 ? 'Active' : 'Locked'}"></span>
+                </td>
+                <td style="text-align: center;" width="200">
+                    <a style="color: blue" th:href="@{/admin/categories/edit(id=${cate.categoryId})}">Edit</a>
+                    <a style="color: red" th:href="@{/admin/categories/delete(id=${cate.categoryId})}">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Phân trang -->
+        <div>
+        <span th:if="${currentPage > 1}"> <!-- Chỉ hiển thị Previous nếu hiện tại không phải trang 1 -->
+            <a th:href="@{/admin/categories/search(keyword=${keyword}, page=${currentPage - 1})}">Previous</a>
+        </span>
+
+            <span th:each="pageNum : ${#numbers.sequence(1, totalPages)}"> <!-- Bắt đầu từ 1 -->
+            <span th:class="${pageNum == currentPage} ? 'current' : ''">
+                <a th:href="@{/admin/categories/search(keyword=${keyword}, page=${pageNum})}" th:text="${pageNum}"></a>
+            </span>
+            <span th:if="${pageNum < totalPages}"> | </span>
+        </span>
+
+            <span th:if="${currentPage < totalPages}"> <!-- Chỉ hiển thị Next nếu không phải là trang cuối -->
+            <a th:href="@{/admin/categories/search(keyword=${keyword}, page=${currentPage + 1})}">Next</a>
+        </span>
+        </div>
+    </div>
+</section>
+</body>
+</html>

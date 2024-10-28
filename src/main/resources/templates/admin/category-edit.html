@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-admin}">
+<head>
+    <title>Update Category</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <a th:href="@{/admin/categories}">Back to Category list</a>
+
+    <form role="form" th:action="@{/admin/categories/edit}" method="post" enctype="multipart/form-data">
+        <input type="text" name="categoryId" hidden="hidden" th:value="${category.categoryId}">
+
+        <div class="form-group">
+            <label>Category name: </label>
+            <input class="form-control" placeholder="Please enter category name" name="categoryName"
+                   th:value="${category.categoryName}" required/>
+        </div>
+
+        <div class="form-group">
+            <label>Status: </label><br/>
+            <input type="radio" id="active" name="status" value="1"
+                   th:checked="${category.status == 1}" required/>
+            <label for="active">Active</label><br/>
+            <input type="radio" id="lock" name="status" value="0"
+                   th:checked="${category.status == 0}"/>
+            <label for="lock">Locked</label>
+        </div>
+
+        <div class="form-group">
+            <label>Image</label>
+            <img height="150" width="200"
+                 th:src="${category.image != null && #strings.startsWith(category.image, 'https') ? category.image : '/image?filename=' + (category.image != null ? category.image : '')}"/>
+        </div>
+
+        <div>
+            <label for="image-link">Change image with URL: </label>
+            <input type="text" name="imageLink" id="image-link">
+        </div>
+
+        <div class="form-group">
+            <label>Change image with file: </label>
+            <input type="file" name="image" accept="image/*"/>
+        </div>
+
+        <button type="submit" class="btn btn-default">Edit</button>
+        <button type="reset" class="btn btn-primary">Reset</button>
+    </form>
+</section>
+</body>
+</html>
